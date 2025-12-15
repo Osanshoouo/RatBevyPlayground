@@ -1,2 +1,2 @@
-# Straftat-Copy-Learning
-This is my attempt to creating something that emulates the movement of the game "Straftat" for learning purposes
+# Playground for met to test stuff
+For example I want to implement something that emulates the movement of the game "Straftat" for learning purposes. The other major focus is creating a system for (fluid) physics sims
