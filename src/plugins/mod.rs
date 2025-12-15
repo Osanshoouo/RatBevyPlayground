@@ -1,7 +1,11 @@
 pub(super) mod camera;
+pub(super) mod camera2d;
 // pub(super) mod debug;
 // pub(super) mod defaults;
 // pub(super) mod fonts;
 pub(super) mod game;
+pub(super) mod game2d;
+// pub(super) mod gamepads;
 pub(super) mod input;
+pub(super) mod input2d;
 // pub(super) mod physics;

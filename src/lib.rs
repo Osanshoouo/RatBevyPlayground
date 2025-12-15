@@ -34,3 +34,20 @@ impl Plugin for AppPlugin {
         app.add_plugins(plugins::debug::plugin);
     }
 }
+
+pub struct AppPlugin2D;
+
+impl Plugin for AppPlugin2D {
+    fn build(&self, app: &mut App) {
+        app.add_plugins((
+            DefaultPlugins,
+            plugins::camera2d::plugin,
+            plugins::game2d::plugin,
+            plugins::input2d::plugin,
+        ));
+
+        // Enable dev tools for dev builds.
+        #[cfg(feature = "dev")]
+        app.add_plugins(plugins::debug::plugin);
+    }
+}
