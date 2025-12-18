@@ -13,6 +13,8 @@ use crate::prelude::cube::Object;
 use crate::prelude::player::Player;
 use crate::prelude::player_camera::CameraSensitivity;
 
+use super::camera2d;
+
 pub(crate) fn plugin(app: &mut App) {
     app.add_systems(Startup, setup);
     // Your game logic here
@@ -24,45 +26,14 @@ fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     asset_server: Res<AssetServer>,
-    mut materials: ResMut<Assets<StandardMaterial>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    let texture_handle = asset_server.load("premium_skin.png");
-    let material_handle = materials.add(StandardMaterial {
-        base_color_texture: Some(texture_handle.clone()),
-        alpha_mode: AlphaMode::Blend,
-        unlit: true,
-        ..default()
-    });
-
-    let sphere = meshes.add(Mesh::from(shape::Icosphere {
-	radius: 0.5,
-	subdivisions: 4,
-    }));
-
-    let white = materials.add(StandardMaterial {
-	base_color: Color::WHITE,
-	unlit: true,
-	..Default::default()
-    });
-    
-    
     commands.spawn((
-	sphere,
-	
-        Object,
-        children![(
-            Camera2d::default(),
-            Transform::from_xy(4.0, 8.0).looking_at(Vec2::ZERO, Vec2::Y),
-        )],
-    )));
-
-    commands.spawn((
-        PointLight {
-            shadows_enabled: true,
-            ..default()
-        },
-        Transform::from_xyz(4.0, 8.0, 4.0),
+        Mesh2d(meshes.add(Circle::new(50.0))),
+        MeshMaterial2d(materials.add(Color::srgb(0.2, 0.2, 0.3))),
     ));
+
+    commands.spawn((Camera2d,));
 }
 
 pub(crate) fn rotation(time: Res<Time>, mut cubes: Query<(&mut Transform, &Object)>) {
