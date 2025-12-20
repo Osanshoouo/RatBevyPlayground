@@ -1,4 +1,5 @@
 #![allow(unused)]
+use bevy::math::VectorSpace;
 use bevy::{
     camera::visibility::RenderLayers, color::palettes::tailwind,
     input::mouse::AccumulatedMouseMotion, light::NotShadowCaster, prelude::*, reflect::TypePath,
@@ -15,12 +16,31 @@ use crate::prelude::player_camera::CameraSensitivity;
 
 use super::camera2d;
 
+#[derive(Component, Debug, Default)]
+pub struct Pos(pub Vec2);
+
+#[derive(Component, Debug, Default)]
+pub struct PrevPos(pub Vec2);
+
+#[derive(Component, Debug)]
+pub struct Mass(pub f32);
+
+impl Default for Mass {
+    fn default() -> Self {
+        Self(1.)
+    }
+}
+
 pub(crate) fn plugin(app: &mut App) {
     app.add_systems(Startup, setup);
+    app.add_systems(Update, simulate);
+    app.add_systems(Update, sync_transforms);
     // Your game logic here
     // setup;
     // rotation;
 }
+
+pub const DELTA_TIME: f32 = 1. / 60.;
 
 fn setup(
     mut commands: Commands,
@@ -30,10 +50,30 @@ fn setup(
 ) {
     commands.spawn((
         Mesh2d(meshes.add(Circle::new(50.0))),
-        MeshMaterial2d(materials.add(Color::srgb(0.2, 0.2, 0.3))),
+        MeshMaterial2d(materials.add(Color::srgb(1.0, 1.0, 1.0))),
+        PrevPos(Vec2::ZERO - Vec2::new(5., 0.) * DELTA_TIME),
+        Pos(Vec2::ZERO),
+        Mass(1.),
     ));
-
     commands.spawn((Camera2d,));
+}
+
+pub fn simulate(mut query: Query<(&mut Pos, &mut PrevPos, &Mass)>) {
+    for (mut pos, mut prev_pos, mass) in query.iter_mut() {
+        let gravity = Vec2::new(0., -9.81);
+        let grivitational_force = mass.0 * gravity;
+        let external_forces = grivitational_force;
+        let velocity = (pos.0 - prev_pos.0) / DELTA_TIME + DELTA_TIME * external_forces / mass.0;
+
+        prev_pos.0 = pos.0;
+        pos.0 = pos.0 + velocity * DELTA_TIME;
+    }
+}
+
+pub fn sync_transforms(mut query: Query<(&mut bevy::transform::components::Transform, &Pos)>) {
+    for (mut transform, pos) in query.iter_mut() {
+        transform.translation = pos.0.extend(0.);
+    }
 }
 
 pub(crate) fn rotation(time: Res<Time>, mut cubes: Query<(&mut Transform, &Object)>) {

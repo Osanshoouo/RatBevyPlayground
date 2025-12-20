@@ -1,1 +1,10 @@
 /target
+/camera.rs~
+/src/plugins/input2d.rs~
+/src/plugins/gamepads.rs~
+/src/plugins/gamepads.rs
+/src/plugins/game2d.rs~
+/src/plugins/camera2d.rs~
+/src/components/player_camera2d.rs~
+/src/components/#mod.rs#
+/.direnv/flake-inputs/qynx9xxgllm00n87bzqfd1xww6y28mx8-source
